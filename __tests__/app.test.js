@@ -36,7 +36,7 @@ describe('app - working', () => {
     });
     describe('GET /api/articles/:article_id', () => {
         test('Should return json of an article with the corresponding id and staus 200', () => {
-            const idToSearch = 2;
+            const idToSearch = 3;
             return request(app)
             .get(`/api/articles/${idToSearch}`)
             .expect(200)
@@ -46,12 +46,12 @@ describe('app - working', () => {
                 expect(article).toEqual(
                     expect.objectContaining({
                         article_id: idToSearch,
-                        title: expect.any(String),
-                        topic: expect.any(String),
-                        author: expect.any(String),
-                        body: expect.any(String),
-                        created_at: expect.any(String),
-                        votes: expect.any(Number)
+                        title: 'Eight pug gifs that remind me of mitch',
+                        topic: 'mitch',
+                        author: 'icellusedkars',
+                        body: 'some gifs',
+                        created_at: '2020-11-03T09:12:00.000Z',
+                        votes: 0
                     })
                 );
             });
@@ -67,6 +67,26 @@ describe('app - error handling', () => {
             .expect(404)
             .then(({body}) => {
                 expect(body.msg).toEqual('Route not found');
+            })
+        });
+    });
+    describe('GET /api/articles/carrots', () => {
+        test('should return error message with 400 for bad request', () => {
+            return request(app)
+            .get('/api/articles/carrots')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Bad request');
+            })
+        });
+    });
+    describe('GET /api/articles/9999', () => {
+        test('should return error message with 404 for invalid article id', () => {
+            return request(app)
+            .get('/api/articles/9999')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No article found with that id');
             })
         });
     });
