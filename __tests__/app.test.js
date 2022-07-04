@@ -1,6 +1,12 @@
 const request = require("supertest")
 const app = require('../app.js');
 const db = require('../db/connection.js');
+const seed = require('../db/seeds/seed.js');
+const testData = require('../db/data/test-data')
+
+beforeEach(() => {
+    return seed(testData);
+})
 
 afterAll(() => {
     db.end();
@@ -28,7 +34,7 @@ describe('app - working', () => {
     });
 });
 
-describe.only('app - error handling', () => {
+describe('app - error handling', () => {
     describe('GET /api/carrots', () => {
         test('should return error message with 404 for invalid path', () => {
             return request(app)
