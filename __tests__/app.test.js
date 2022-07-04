@@ -36,7 +36,7 @@ describe('app - working', () => {
     });
     describe('GET /api/articles/:article_id', () => {
         test('Should return json of an article with the corresponding id and staus 200', () => {
-            const idToSearch = 2;
+            const idToSearch = 3;
             return request(app)
             .get(`/api/articles/${idToSearch}`)
             .expect(200)
@@ -54,6 +54,30 @@ describe('app - working', () => {
                         votes: expect.any(Number)
                     })
                 );
+            });
+        });
+    });
+    describe.only('PATCH /api/articles/:article_id', () => {
+        test('Should return json of aupdated article and status 200', () => {
+            const idToPatch = 3;
+            const patchData = {inc_votes: 12}
+            return request(app)
+            .patch(`/api/articles/${idToPatch}`)
+            .send(patchData)
+            .expect(200)
+            .then(({body}) => {
+                article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: idToPatch,
+                        title: 'Eight pug gifs that remind me of mitch',
+                        topic: 'mitch',
+                        author: 'icellusedkars',
+                        body: 'some gifs',
+                        created_at: '2020-11-03T09:12:00.000Z',
+                        votes: 12
+                    })
+                )
             });
         });
     });
