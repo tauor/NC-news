@@ -94,4 +94,28 @@ describe('app - error handling', () => {
             })
         });
     });
+    describe('PATCH /api/articles/:article_id', () => {
+        test('should return error message with 404 for invalid path', () => {
+            const patchData = {inc_votes: 12}
+            return request(app)
+            .patch('/api/articles/99999')
+            .send(patchData)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('no article with that id');
+            })
+        });
+    });
+    describe('PATCH /api/articles/:article_id', () => {
+        test('should return error message with 404 for invalid path', () => {
+            const patchData = {votes: 12}
+            return request(app)
+            .patch('/api/articles/3')
+            .send(patchData)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('invalid request body');
+            })
+        });
+    });
 });
