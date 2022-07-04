@@ -13,7 +13,7 @@ afterAll(() => {
 });
 
 
-describe('app - working', () => {
+describe.only('app - working', () => {
     describe('GET /api/topics', () => {
         test('Should return json of the topics with status 200', () => {
             return request(app)
@@ -22,7 +22,7 @@ describe('app - working', () => {
             .then(({body}) => {
                 topics = body.topics;
                 expect(topics).toBeInstanceOf(Array);
-                expect(topics.length > 0).toBeTruthy()
+                expect(topics.length === 3).toBeTruthy()
                 topics.forEach((topic) => {
                     expect(topic).toEqual(
                         expect.objectContaining({
@@ -34,6 +34,7 @@ describe('app - working', () => {
             });
         });
     });
+
 });
 
 describe('app - error handling', () => {
