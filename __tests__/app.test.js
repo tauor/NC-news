@@ -58,7 +58,7 @@ describe('app - working', () => {
         });
     });
     describe('PATCH /api/articles/:article_id', () => {
-        test('Should update corresponding article and return json of aupdated article with status 200', () => {
+        test('Can add votes to corresponding article and return json of updated article with status 200', () => {
             const idToPatch = 3;
             const patchData = {inc_votes: 12}
             return request(app)
@@ -80,11 +80,33 @@ describe('app - working', () => {
                 )
             });
         });
+        test('Can subtract votes to corresponding article and return json of updated article with status 200', () => {
+            const idToPatch = 1;
+            const patchData = {inc_votes: -60}
+            return request(app)
+            .patch(`/api/articles/${idToPatch}`)
+            .send(patchData)
+            .expect(200)
+            .then(({body}) => {
+                article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: idToPatch,
+                        title: "Living in the shadow of a great man",
+                        topic: "mitch",
+                        author: "butter_bridge",
+                        body: "I find this existence challenging",
+                        created_at: '2020-07-09T20:11:00.000Z',
+                        votes: 40,
+                    })
+                )
+            });
+        });
     });
 });
 
 describe('app - error handling', () => {
-    describe('GET /api/carrots', () => {
+    describe('GET /api/:article_id', () => {
         test('should return error message with 404 for invalid path', () => {
             return request(app)
             .get('/api/carrots')
@@ -114,7 +136,7 @@ describe('app - error handling', () => {
             })
         });
     });
-    describe.only('PATCH /api/articles/:article_id', () => {
+    describe('PATCH /api/articles/:article_id', () => {
         test('should return error message with 404 for invalid path', () => {
             const patchData = {inc_votes: 12}
             return request(app)
@@ -122,7 +144,7 @@ describe('app - error handling', () => {
             .send(patchData)
             .expect(404)
             .then(({body}) => {
-                expect(body.msg).toEqual('no article with that id');
+                expect(body.msg).toEqual('No article found with that id');
             })
         });
     });
@@ -134,7 +156,7 @@ describe('app - error handling', () => {
             .send(patchData)
             .expect(400)
             .then(({body}) => {
-                expect(body.msg).toEqual('invalid request body');
+                expect(body.msg).toEqual('Invalid request body');
             })
         });
     });
