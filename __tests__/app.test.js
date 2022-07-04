@@ -46,19 +46,19 @@ describe('app - working', () => {
                 expect(article).toEqual(
                     expect.objectContaining({
                         article_id: idToSearch,
-                        title: expect.any(String),
-                        topic: expect.any(String),
-                        author: expect.any(String),
-                        body: expect.any(String),
-                        created_at: expect.any(String),
-                        votes: expect.any(Number)
+                        title: 'Eight pug gifs that remind me of mitch',
+                        topic: 'mitch',
+                        author: 'icellusedkars',
+                        body: 'some gifs',
+                        created_at: '2020-11-03T09:12:00.000Z',
+                        votes: 0
                     })
                 );
             });
         });
     });
-    describe.only('PATCH /api/articles/:article_id', () => {
-        test('Should return json of aupdated article and status 200', () => {
+    describe('PATCH /api/articles/:article_id', () => {
+        test('Should update corresponding article and return json of aupdated article with status 200', () => {
             const idToPatch = 3;
             const patchData = {inc_votes: 12}
             return request(app)
@@ -94,11 +94,31 @@ describe('app - error handling', () => {
             })
         });
     });
-    describe('PATCH /api/articles/:article_id', () => {
+    describe('GET /api/articles/:article_id', () => {
+        test('should return error message with 400 for bad request', () => {
+            return request(app)
+            .get('/api/articles/carrots')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Bad request');
+            })
+        });
+    });
+    describe('GET /api/articles/:article_id', () => {
+        test('should return error message with 404 for invalid article id', () => {
+            return request(app)
+            .get('/api/articles/9999')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No article found with that id');
+            })
+        });
+    });
+    describe.only('PATCH /api/articles/:article_id', () => {
         test('should return error message with 404 for invalid path', () => {
             const patchData = {inc_votes: 12}
             return request(app)
-            .patch('/api/articles/99999')
+            .patch('/api/articles/9999')
             .send(patchData)
             .expect(404)
             .then(({body}) => {
