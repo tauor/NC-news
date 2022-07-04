@@ -12,6 +12,7 @@ afterAll(() => {
     db.end();
 });
 
+
 describe('app - working', () => {
     describe('GET /api/topics', () => {
         test('Should return json of the topics with status 200', () => {
