@@ -34,6 +34,29 @@ describe('app - working', () => {
             });
         });
     });
+    describe('GET /api/articles/:article_id', () => {
+        test('Should return json of an article with the corresponding id and staus 200', () => {
+            const idToSearch = 2;
+            return request(app)
+            .get(`/api/articles/${idToSearch}`)
+            .expect(200)
+            .then(({body}) => {
+                article = body.article;
+                expect(article).toBeInstanceOf(Object);
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: idToSearch,
+                        title: expect.any(String),
+                        topic: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number)
+                    })
+                );
+            });
+        });
+    });
 });
 
 describe('app - error handling', () => {
