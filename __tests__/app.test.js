@@ -22,7 +22,7 @@ describe('app - working', () => {
             .then(({body}) => {
                 topics = body.topics;
                 expect(topics).toBeInstanceOf(Array);
-                expect(topics.length > 0).toBeTruthy()
+                expect(topics.length === 3).toBeTruthy()
                 topics.forEach((topic) => {
                     expect(topic).toEqual(
                         expect.objectContaining({
@@ -57,8 +57,7 @@ describe('app - working', () => {
             });
         });
     });
-});
-
+    
 describe('app - error handling', () => {
     describe('GET /api/carrots', () => {
         test('should return error message with 404 for invalid path', () => {
