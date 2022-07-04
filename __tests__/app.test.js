@@ -13,7 +13,7 @@ afterAll(() => {
 });
 
 
-describe.only('app - working', () => {
+describe('app - working', () => {
     describe('GET /api/topics', () => {
         test('Should return json of the topics with status 200', () => {
             return request(app)
