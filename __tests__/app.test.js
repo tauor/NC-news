@@ -13,7 +13,7 @@ afterAll(() => {
 });
 
 
-describe('app - working', () => {
+describe('app', () => {
     describe('GET /api/topics', () => {
         test('Should return json of the topics with status 200', () => {
             return request(app)
@@ -32,6 +32,14 @@ describe('app - working', () => {
                     );
                 });
             });
+        });
+        test('should return error message with 404 for invalid path', () => {
+            return request(app)
+            .get('/api/carrots')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Route not found');
+            })
         });
     });
     describe('GET /api/articles/:article_id', () => {
@@ -55,6 +63,22 @@ describe('app - working', () => {
                     })
                 );
             });
+        });
+        test('should return error message with 400 for bad request', () => {
+            return request(app)
+            .get('/api/articles/carrots')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Bad request');
+            })
+        });
+        test('should return error message with 404 for invalid article id', () => {
+            return request(app)
+            .get('/api/articles/9999')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No article found with that id');
+            })
         });
     });
     describe('PATCH /api/articles/:article_id', () => {
@@ -102,53 +126,6 @@ describe('app - working', () => {
                 )
             });
         });
-    });
-});
-
-describe('app - error handling', () => {
-    describe('GET /api/:article_id', () => {
-        test('should return error message with 404 for invalid path', () => {
-            return request(app)
-            .get('/api/carrots')
-            .expect(404)
-            .then(({body}) => {
-                expect(body.msg).toEqual('Route not found');
-            })
-        });
-    });
-    describe('GET /api/articles/:article_id', () => {
-        test('should return error message with 400 for bad request', () => {
-            return request(app)
-            .get('/api/articles/carrots')
-            .expect(400)
-            .then(({body}) => {
-                expect(body.msg).toEqual('Bad request');
-            })
-        });
-    });
-    describe('GET /api/articles/:article_id', () => {
-        test('should return error message with 404 for invalid article id', () => {
-            return request(app)
-            .get('/api/articles/9999')
-            .expect(404)
-            .then(({body}) => {
-                expect(body.msg).toEqual('No article found with that id');
-            })
-        });
-    });
-    describe('PATCH /api/articles/:article_id', () => {
-        test('should return error message with 404 for invalid path', () => {
-            const patchData = {inc_votes: 12}
-            return request(app)
-            .patch('/api/articles/9999')
-            .send(patchData)
-            .expect(404)
-            .then(({body}) => {
-                expect(body.msg).toEqual('No article found with that id');
-            })
-        });
-    });
-    describe('PATCH /api/articles/:article_id', () => {
         test('should return error message with 404 for invalid path', () => {
             const patchData = {votes: 12}
             return request(app)
@@ -157,6 +134,16 @@ describe('app - error handling', () => {
             .expect(400)
             .then(({body}) => {
                 expect(body.msg).toEqual('Invalid request body');
+            })
+        });
+        test('should return error message with 404 for invalid path', () => {
+            const patchData = {inc_votes: 12}
+            return request(app)
+            .patch('/api/articles/9999')
+            .send(patchData)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No article found with that id');
             })
         });
     });
