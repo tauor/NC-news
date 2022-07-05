@@ -6,9 +6,12 @@ exports.selectTopics = () => {
 }
 
 exports.selectArticleById = (id) => {
-    const dbQuery = (`SELECT * FROM articles, COUNT(*) `,[id]);
+    const dbQuery = (`SELECT articles.*, COUNT (*) AS comment_count
+    FROM articles 
+    INNER JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = ${id}
+    GROUP BY articles.article_id;`);
     return db.query(dbQuery)
-    //return db.query(`SELECT * FROM articles WHERE article_id=$1`,[id])
         .then((result) => {
             result.rows[0];
             if (!result.rows[0]){ 

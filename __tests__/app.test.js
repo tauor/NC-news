@@ -43,13 +43,14 @@ describe('app', () => {
         });
     });
     describe('GET /api/articles/:article_id', () => {
-        test('Should return json of an article with the corresponding id and staus 200', () => {
+        test.only('Should return json of an article with the corresponding id, including a comment count and staus 200', () => {
             const idToSearch = 3;
             return request(app)
             .get(`/api/articles/${idToSearch}`)
             .expect(200)
             .then(({body}) => {
                 article = body.article;
+                article.comment_count = parseInt(article.comment_count);
                 expect(article).toBeInstanceOf(Object);
                 expect(article).toEqual(
                     expect.objectContaining({
@@ -59,19 +60,10 @@ describe('app', () => {
                         author: 'icellusedkars',
                         body: 'some gifs',
                         created_at: '2020-11-03T09:12:00.000Z',
-                        votes: 0
+                        votes: 0,
+                        comment_count: 2
                     })
                 );
-            });
-        });
-        test.only('Should return json of an article with the corresponding id and comment count', () => {
-            const idToSearch = 3;
-            return request(app)
-            .get(`/api/articles/${idToSearch}`)
-            .expect(200)
-            .then(({body}) => {
-                article = body.article;
-                console.log(article)
             });
         });
         test('should return error message with 400 for bad request', () => {
