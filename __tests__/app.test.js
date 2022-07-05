@@ -2,7 +2,7 @@ const request = require("supertest")
 const app = require('../app.js');
 const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed.js');
-const testData = require('../db/data/test-data')
+const testData = require('../db/data/test-data');
 
 beforeEach(() => {
     return seed(testData);
@@ -144,6 +144,35 @@ describe('app', () => {
             .expect(404)
             .then(({body}) => {
                 expect(body.msg).toEqual('No article found with that id');
+            })
+        });
+    });
+    describe('GET /api/users', () => {
+        test('Should return json of the users with status 200', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({body}) => {
+                users = body.users;
+                expect(users).toBeInstanceOf(Array);
+                expect(users.length === 4).toBeTruthy();
+                users.forEach((user) => {
+                    expect(user).toEqual(
+                        expect.objectContaining({
+                            username: expect.any(String),
+                            name: expect.any(String),
+                            avatar_url: expect.any(String)
+                        })
+                    )
+                })
+            });
+        });
+        test('should return error message with 404 for invalid path', () => {
+            return request(app)
+            .get('/api/carrots')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Route not found');
             })
         });
     });
