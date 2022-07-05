@@ -64,6 +64,16 @@ describe('app', () => {
                 );
             });
         });
+        test.only('Should return json of an article with the corresponding id and comment count', () => {
+            const idToSearch = 3;
+            return request(app)
+            .get(`/api/articles/${idToSearch}`)
+            .expect(200)
+            .then(({body}) => {
+                article = body.article;
+                console.log(article)
+            });
+        });
         test('should return error message with 400 for bad request', () => {
             return request(app)
             .get('/api/articles/carrots')

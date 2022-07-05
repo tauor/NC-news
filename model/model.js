@@ -6,7 +6,9 @@ exports.selectTopics = () => {
 }
 
 exports.selectArticleById = (id) => {
-    return db.query(`SELECT * FROM articles WHERE article_id=$1`,[id])
+    const dbQuery = (`SELECT * FROM articles, COUNT(*) `,[id]);
+    return db.query(dbQuery)
+    //return db.query(`SELECT * FROM articles WHERE article_id=$1`,[id])
         .then((result) => {
             result.rows[0];
             if (!result.rows[0]){ 
