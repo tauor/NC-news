@@ -6,12 +6,11 @@ exports.selectTopics = () => {
 }
 
 exports.selectArticleById = (id) => {
-    const dbQuery = (`SELECT articles.*, COUNT (*) AS comment_count
-    FROM articles 
-    INNER JOIN comments ON articles.article_id = comments.article_id
-    WHERE articles.article_id = ${id}
-    GROUP BY articles.article_id;`);
-    return db.query(dbQuery)
+    return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
+        FROM articles 
+        FULL OUTER JOIN comments ON articles.article_id = comments.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id;`,[id])
         .then((result) => {
             result.rows[0];
             if (!result.rows[0]){ 
@@ -47,4 +46,15 @@ exports.changeArticleVotesById = (id,newVotes) => {
 exports.selectUsers = () => {
     return db.query('SELECT * FROM users')
         .then((result) => result.rows);
+}
+
+exports.selectArticles = () => {
+    return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
+    FROM articles 
+    FULL JOIN comments ON articles.article_id = comments.article_id
+    GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC`)
+    .then((result) => {
+        return result.rows;
+    })
 }

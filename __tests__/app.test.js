@@ -43,7 +43,7 @@ describe('app', () => {
         });
     });
     describe('GET /api/articles/:article_id', () => {
-        test.only('Should return json of an article with the corresponding id, including a comment count and staus 200', () => {
+        test('Should return json of an article with the corresponding id, including a comment count and staus 200', () => {
             const idToSearch = 3;
             return request(app)
             .get(`/api/articles/${idToSearch}`)
@@ -164,6 +164,41 @@ describe('app', () => {
                             username: expect.any(String),
                             name: expect.any(String),
                             avatar_url: expect.any(String)
+                        })
+                    )
+                })
+            });
+        });
+        test('should return error message with 404 for invalid path', () => {
+            return request(app)
+            .get('/api/carrots')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Route not found');
+            })
+        });
+    });
+    describe('GET /api/articles', () => {
+        test('Should return json of the articles, orderd by date in descending order with status 200', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length === 12)
+                expect(articles).toBeSortedBy('created_at',{descending:true});
+                articles.forEach((article) => {
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            article_id: expect.any(Number),
+                            title: expect.any(String),
+                            topic: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number)
                         })
                     )
                 })
