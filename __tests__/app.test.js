@@ -2,7 +2,7 @@ const request = require("supertest")
 const app = require('../app.js');
 const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed.js');
-const testData = require('../db/data/test-data')
+const testData = require('../db/data/test-data');
 
 beforeEach(() => {
     return seed(testData);
@@ -20,7 +20,7 @@ describe('app', () => {
             .get('/api/topics')
             .expect(200)
             .then(({body}) => {
-                topics = body.topics;
+                const topics = body.topics;
                 expect(topics).toBeInstanceOf(Array);
                 expect(topics.length > 0).toBeTruthy()
                 topics.forEach((topic) => {
@@ -49,7 +49,7 @@ describe('app', () => {
             .get(`/api/articles/${idToSearch}`)
             .expect(200)
             .then(({body}) => {
-                article = body.article;
+                const article = body.article;
                 expect(article).toBeInstanceOf(Object);
                 expect(article).toEqual(
                     expect.objectContaining({
@@ -90,7 +90,7 @@ describe('app', () => {
             .send(patchData)
             .expect(200)
             .then(({body}) => {
-                article = body.article;
+                const article = body.article;
                 expect(article).toEqual(
                     expect.objectContaining({
                         article_id: idToPatch,
@@ -112,7 +112,7 @@ describe('app', () => {
             .send(patchData)
             .expect(200)
             .then(({body}) => {
-                article = body.article;
+                const article = body.article;
                 expect(article).toEqual(
                     expect.objectContaining({
                         article_id: idToPatch,
@@ -144,6 +144,35 @@ describe('app', () => {
             .expect(404)
             .then(({body}) => {
                 expect(body.msg).toEqual('No article found with that id');
+            })
+        });
+    });
+    describe('GET /api/users', () => {
+        test('Should return json of the users with status 200', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({body}) => {
+                const users = body.users;
+                expect(users).toBeInstanceOf(Array);
+                expect(users.length === 4).toBeTruthy();
+                users.forEach((user) => {
+                    expect(user).toEqual(
+                        expect.objectContaining({
+                            username: expect.any(String),
+                            name: expect.any(String),
+                            avatar_url: expect.any(String)
+                        })
+                    )
+                })
+            });
+        });
+        test('should return error message with 404 for invalid path', () => {
+            return request(app)
+            .get('/api/carrots')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Route not found');
             })
         });
     });

@@ -38,3 +38,8 @@ exports.changeArticleVotesById = (id,newVotes) => {
             return result.rows[0];
         })
 }
+
+exports.selectUsers = () => {
+    return db.query('SELECT * FROM users')
+        .then((result) => result.rows);
+}

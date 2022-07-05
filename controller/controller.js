@@ -1,6 +1,7 @@
 const {selectTopics, 
     selectArticleById,
-    changeArticleVotesById
+    changeArticleVotesById,
+    selectUsers
     } = require('../model/model.js')
 
 
@@ -25,5 +26,11 @@ exports.updateArticleVotes = (req, res, next) => {
         res.status(200).send({article});
     })
     .catch(next);
+}
+
+exports.getUsers = (req, res) => {
+    selectUsers().then((users) => {
+        res.status(200).send({users});
+    })
 }
 
