@@ -49,7 +49,6 @@ describe('app', () => {
             .get(`/api/articles/${idToSearch}`)
             .expect(200)
             .then(({body}) => {
-                article = body.article;
                 const article = body.article;
                 expect(article).toBeInstanceOf(Object);
                 expect(article).toEqual(
