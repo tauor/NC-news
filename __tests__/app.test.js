@@ -13,7 +13,7 @@ afterAll(() => {
 });
 
 
-describe('app - working', () => {
+describe('app', () => {
     describe('GET /api/topics', () => {
         test('Should return json of the topics with status 200', () => {
             return request(app)
@@ -22,7 +22,7 @@ describe('app - working', () => {
             .then(({body}) => {
                 topics = body.topics;
                 expect(topics).toBeInstanceOf(Array);
-                expect(topics.length === 3).toBeTruthy()
+                expect(topics.length > 0).toBeTruthy()
                 topics.forEach((topic) => {
                     expect(topic).toEqual(
                         expect.objectContaining({
@@ -32,6 +32,14 @@ describe('app - working', () => {
                     );
                 });
             });
+        });
+        test('should return error message with 404 for invalid path', () => {
+            return request(app)
+            .get('/api/carrots')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Route not found');
+            })
         });
     });
     describe('GET /api/articles/:article_id', () => {
@@ -56,20 +64,6 @@ describe('app - working', () => {
                 );
             });
         });
-    });
-    
-describe('app - error handling', () => {
-    describe('GET /api/carrots', () => {
-        test('should return error message with 404 for invalid path', () => {
-            return request(app)
-            .get('/api/carrots')
-            .expect(404)
-            .then(({body}) => {
-                expect(body.msg).toEqual('Route not found');
-            })
-        });
-    });
-    describe('GET /api/articles/carrots', () => {
         test('should return error message with 400 for bad request', () => {
             return request(app)
             .get('/api/articles/carrots')
@@ -78,11 +72,75 @@ describe('app - error handling', () => {
                 expect(body.msg).toEqual('Bad request');
             })
         });
-    });
-    describe('GET /api/articles/9999', () => {
         test('should return error message with 404 for invalid article id', () => {
             return request(app)
             .get('/api/articles/9999')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No article found with that id');
+            })
+        });
+    });
+    describe('PATCH /api/articles/:article_id', () => {
+        test('Can add votes to corresponding article and return json of updated article with status 200', () => {
+            const idToPatch = 3;
+            const patchData = {inc_votes: 12}
+            return request(app)
+            .patch(`/api/articles/${idToPatch}`)
+            .send(patchData)
+            .expect(200)
+            .then(({body}) => {
+                article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: idToPatch,
+                        title: 'Eight pug gifs that remind me of mitch',
+                        topic: 'mitch',
+                        author: 'icellusedkars',
+                        body: 'some gifs',
+                        created_at: '2020-11-03T09:12:00.000Z',
+                        votes: 12
+                    })
+                )
+            });
+        });
+        test('Can subtract votes to corresponding article and return json of updated article with status 200', () => {
+            const idToPatch = 1;
+            const patchData = {inc_votes: -60}
+            return request(app)
+            .patch(`/api/articles/${idToPatch}`)
+            .send(patchData)
+            .expect(200)
+            .then(({body}) => {
+                article = body.article;
+                expect(article).toEqual(
+                    expect.objectContaining({
+                        article_id: idToPatch,
+                        title: "Living in the shadow of a great man",
+                        topic: "mitch",
+                        author: "butter_bridge",
+                        body: "I find this existence challenging",
+                        created_at: '2020-07-09T20:11:00.000Z',
+                        votes: 40,
+                    })
+                )
+            });
+        });
+        test('should return error message with 404 for invalid path', () => {
+            const patchData = {votes: 12}
+            return request(app)
+            .patch('/api/articles/3')
+            .send(patchData)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Invalid request body');
+            })
+        });
+        test('should return error message with 404 for invalid path', () => {
+            const patchData = {inc_votes: 12}
+            return request(app)
+            .patch('/api/articles/9999')
+            .send(patchData)
             .expect(404)
             .then(({body}) => {
                 expect(body.msg).toEqual('No article found with that id');
