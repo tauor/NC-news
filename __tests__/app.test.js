@@ -20,7 +20,7 @@ describe('app', () => {
             .get('/api/topics')
             .expect(200)
             .then(({body}) => {
-                topics = body.topics;
+                const topics = body.topics;
                 expect(topics).toBeInstanceOf(Array);
                 expect(topics.length > 0).toBeTruthy()
                 topics.forEach((topic) => {
@@ -50,7 +50,7 @@ describe('app', () => {
             .expect(200)
             .then(({body}) => {
                 article = body.article;
-                article.comment_count = parseInt(article.comment_count);
+                const article = body.article;
                 expect(article).toBeInstanceOf(Object);
                 expect(article).toEqual(
                     expect.objectContaining({
@@ -92,7 +92,7 @@ describe('app', () => {
             .send(patchData)
             .expect(200)
             .then(({body}) => {
-                article = body.article;
+                const article = body.article;
                 expect(article).toEqual(
                     expect.objectContaining({
                         article_id: idToPatch,
@@ -114,7 +114,7 @@ describe('app', () => {
             .send(patchData)
             .expect(200)
             .then(({body}) => {
-                article = body.article;
+                const article = body.article;
                 expect(article).toEqual(
                     expect.objectContaining({
                         article_id: idToPatch,
@@ -155,7 +155,7 @@ describe('app', () => {
             .get('/api/users')
             .expect(200)
             .then(({body}) => {
-                users = body.users;
+                const users = body.users;
                 expect(users).toBeInstanceOf(Array);
                 expect(users.length === 4).toBeTruthy();
                 users.forEach((user) => {
