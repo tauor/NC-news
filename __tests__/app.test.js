@@ -50,7 +50,6 @@ describe('app', () => {
             .expect(200)
             .then(({body}) => {
                 const article = body.article;
-                article.comment_count = parseInt(article.comment_count);
                 expect(article).toBeInstanceOf(Object);
                 expect(article).toEqual(
                     expect.objectContaining({
@@ -185,12 +184,10 @@ describe('app', () => {
             .expect(200)
             .then(({body}) => {
                 const articles = body.articles;
-                //console.log(articles)
                 expect(articles).toBeInstanceOf(Array);
                 expect(articles.length === 12)
                 expect(articles).toBeSortedBy('created_at',{descending:true});
                 articles.forEach((article) => {
-                    article.comment_count = parseInt(article.comment_count);
                     expect(article).toEqual(
                         expect.objectContaining({
                             article_id: expect.any(Number),

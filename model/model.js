@@ -6,7 +6,7 @@ exports.selectTopics = () => {
 }
 
 exports.selectArticleById = (id) => {
-    return db.query(`SELECT articles.*, COUNT (*) AS comment_count
+    return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
         FROM articles 
         FULL OUTER JOIN comments ON articles.article_id = comments.article_id
         WHERE articles.article_id = $1
@@ -49,12 +49,11 @@ exports.selectUsers = () => {
 }
 
 exports.selectArticles = () => {
-    return db.query(`SELECT articles.*, COUNT (*) AS comment_count
+    return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
     FROM articles 
     FULL JOIN comments ON articles.article_id = comments.article_id
     GROUP BY articles.article_id
     ORDER BY articles.created_at DESC`)
-    //return db.query('SELECT * FROM articles')
     .then((result) => {
         return result.rows;
     })
