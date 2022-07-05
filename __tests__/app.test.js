@@ -184,8 +184,26 @@ describe('app', () => {
             .get('/api/articles')
             .expect(200)
             .then(({body}) => {
-                const articles = body.users;
-                console.log(articles);
+                const articles = body.articles;
+                //console.log(articles)
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length === 12)
+                expect(articles).toBeSortedBy('created_at',{descending:true});
+                articles.forEach((article) => {
+                    article.comment_count = parseInt(article.comment_count);
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            article_id: expect.any(Number),
+                            title: expect.any(String),
+                            topic: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number)
+                        })
+                    )
+                })
             });
         });
         test('should return error message with 404 for invalid path', () => {
