@@ -20,7 +20,7 @@ describe('app', () => {
             .get('/api/topics')
             .expect(200)
             .then(({body}) => {
-                topics = body.topics;
+                const topics = body.topics;
                 expect(topics).toBeInstanceOf(Array);
                 expect(topics.length > 0).toBeTruthy()
                 topics.forEach((topic) => {
@@ -43,13 +43,13 @@ describe('app', () => {
         });
     });
     describe('GET /api/articles/:article_id', () => {
-        test.only('Should return json of an article with the corresponding id, including a comment count and staus 200', () => {
+        test('Should return json of an article with the corresponding id, including a comment count and staus 200', () => {
             const idToSearch = 3;
             return request(app)
             .get(`/api/articles/${idToSearch}`)
             .expect(200)
             .then(({body}) => {
-                article = body.article;
+                const article = body.article;
                 article.comment_count = parseInt(article.comment_count);
                 expect(article).toBeInstanceOf(Object);
                 expect(article).toEqual(
@@ -92,7 +92,7 @@ describe('app', () => {
             .send(patchData)
             .expect(200)
             .then(({body}) => {
-                article = body.article;
+                const article = body.article;
                 expect(article).toEqual(
                     expect.objectContaining({
                         article_id: idToPatch,
@@ -114,7 +114,7 @@ describe('app', () => {
             .send(patchData)
             .expect(200)
             .then(({body}) => {
-                article = body.article;
+                const article = body.article;
                 expect(article).toEqual(
                     expect.objectContaining({
                         article_id: idToPatch,
@@ -155,7 +155,7 @@ describe('app', () => {
             .get('/api/users')
             .expect(200)
             .then(({body}) => {
-                users = body.users;
+                const users = body.users;
                 expect(users).toBeInstanceOf(Array);
                 expect(users.length === 4).toBeTruthy();
                 users.forEach((user) => {
@@ -167,6 +167,25 @@ describe('app', () => {
                         })
                     )
                 })
+            });
+        });
+        test('should return error message with 404 for invalid path', () => {
+            return request(app)
+            .get('/api/carrots')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Route not found');
+            })
+        });
+    });
+    describe('GET /api/articles', () => {
+        test('Should return json of the articles, orderd by date in descending order with status 200', () => {
+            return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.users;
+                console.log(articles);
             });
         });
         test('should return error message with 404 for invalid path', () => {
