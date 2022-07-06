@@ -53,7 +53,7 @@ exports.selectArticles = (sort_by, order, topic) => {
     if (order === undefined){
         order = 'desc'
     }
-    console.log(sort_by, order, topic)
+    //console.log(sort_by, order, topic)
     if (topic === undefined){
         return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
         FROM articles 
@@ -91,6 +91,12 @@ exports.selectArticlesComments = async (id) => {
 }
 
 exports.addComment = async (articleId, author, body) => {
+    if (author === undefined || body === undefined){
+        return Promise.reject({
+            status: 400,
+            msg: 'Bad request'
+        })
+    }
     const articles = await db.query(`SELECT * FROM articles WHERE article_id = $1`,[articleId]);
     if (articles.rows.length === 0){
         return Promise.reject({
