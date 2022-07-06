@@ -265,8 +265,8 @@ describe('app', () => {
             })
         });
     });
-    describe.only('POST /api/articles/:article_id/comments', () => {
-        test('Should post a new comment to the specifed article, respond with the json of that comment and status 201', () => {
+    describe('POST /api/articles/:article_id/comments', () => {
+        test('Should post a new comment to comments with the specifed article, respond with the json of that comment and status 201', () => {
             const idToPost = 9
             const commentToPost = {
                 username: 'rogersop',
@@ -277,8 +277,49 @@ describe('app', () => {
             .send(commentToPost)
             .expect(201)
             .then(({body}) => {
-                console.log(body.comment);
-            });
+                const comment = body.comment;
+                expect(comment).toEqual(
+                    expect.objectContaining({
+                        comment_id: 19,
+                        body: 'test comment :)',
+                        article_id: idToPost,
+                        author: 'rogersop',
+                        votes: 0,
+                        created_at: expect.any(String)
+                    })
+                )
+            }).then(() => {
+                return db.query('SELECT * FROM comments WHERE comment_id = 19')
+                .then((addedComment) => {
+                    expect(addedComment.rows.length === 1).toBeTruthy();
+                })
+            })
+        });
+        test('should return error message with 404 for invalid article id', () => {
+            const commentToPost = {
+                username: 'rogersop',
+                body: 'test comment :)'
+            }
+            return request(app)
+            .post('/api/articles/9999/comments')
+            .send(commentToPost)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No article found with that id');
+            })
+        });
+        test('should return error message with 400 for invalid username', () => {
+            const commentToPost = {
+                username: 'tom',
+                body: 'test comment :)'
+            }
+            return request(app)
+            .post('/api/articles/9/comments')
+            .send(commentToPost)
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No user with that username');
+            })
         });
     });
 });

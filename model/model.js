@@ -59,10 +59,10 @@ exports.selectArticles = () => {
 }
 
 exports.selectArticlesComments = async (id) => {
-    const articles = await db.query(`SELECT * FROM articles`)
+    const articles = await db.query(`SELECT * FROM articles WHERE article_id = $1`,[id])
     return db.query(`SELECT * FROM comments WHERE article_id = $1`,[id])
     .then((result) => {
-        if (!result.rows[0] && id > articles.rows.length){
+        if (articles.rows.length === 0){
             return Promise.reject({
                 status: 404,
                 msg: 'No article found with that id'
@@ -72,17 +72,24 @@ exports.selectArticlesComments = async (id) => {
     })
 }
 
-exports.addComment = (articleId, author, body) => {
-    const articles = await db.query(`SELECT * FROM articles`)
+exports.addComment = async (articleId, author, body) => {
+    const articles = await db.query(`SELECT * FROM articles WHERE article_id = $1`,[articleId]);
+    if (articles.rows.length === 0){
+        return Promise.reject({
+            status: 404,
+            msg: 'No article found with that id'
+        })
+    }
+    const users = await db.query(`SELECT * FROM users WHERE username = $1`,[author]);
+    if (users.rows.length === 0){
+        return Promise.reject({
+            status: 404,
+            msg: 'No user with that username'
+        })
+    }
     return db.query(`INSERT INTO comments (body, article_id, author)
     VALUES ($1, $2, $3) RETURNING *`,[body,articleId,author])
     .then((result) => {
-        if (articles.rows.length === 0){
-            return Promise.reject({
-                status: 404,
-                msg: 'No article found with that id'
-            })
-        }
         return result.rows[0]
     })
 }
