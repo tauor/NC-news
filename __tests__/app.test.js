@@ -331,7 +331,7 @@ describe('app', () => {
                 expect(body.msg).toEqual('No article found with that id');
             })
         });
-        test('should return error message with 400 for invalid username', () => {
+        test('should return error message with 404 for invalid username', () => {
             const commentToPost = {
                 username: 'tom',
                 body: 'test comment :)'
@@ -342,6 +342,19 @@ describe('app', () => {
             .expect(404)
             .then(({body}) => {
                 expect(body.msg).toEqual('No user with that username');
+            })
+        });
+        test('should return error message with 400 for invalid request', () => {
+            const commentToPost = {
+                name: 'tom',
+                arm: 'test comment :)'
+            }
+            return request(app)
+            .post('/api/articles/9/comments')
+            .send(commentToPost)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Bad request');
             })
         });
     });
