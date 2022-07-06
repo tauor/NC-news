@@ -7,7 +7,8 @@ const {getTopics,
     updateArticleVotes, 
     getUsers,
     getArticles,
-    getArticlesComments
+    getArticlesComments,
+    postComment
     } = require('./controller/controller.js')
     
 const {PSQLErrors, customErrors, unhandledErrors, routeError} = require('./handlers/error-handlers.js')
@@ -19,6 +20,8 @@ app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id/comments', getArticlesComments);
 
 app.patch('/api/articles/:article_id', updateArticleVotes);
+
+app.post('/api/articles/:article_id/comments', postComment)
 
 
 
