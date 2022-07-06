@@ -1,5 +1,4 @@
 const db = require('../db/connection.js');
-const {convertTimestampToDate} = require('../db/helpers/utils.js');
 
 exports.selectTopics = () => {
     return db.query('SELECT * FROM topics')
