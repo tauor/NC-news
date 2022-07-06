@@ -178,7 +178,7 @@ describe('app', () => {
         });
     });
     describe('GET /api/articles', () => {
-        test('Should return json of the articles, orderd by date in descending order with status 200', () => {
+        test('Should return json of the articles, orderd by date (default) in descending (default) order with status 200', () => {
             return request(app)
             .get('/api/articles')
             .expect(200)
@@ -201,6 +201,29 @@ describe('app', () => {
                         })
                     )
                 })
+            });
+        });
+        test('Should return json of the articles, orderd by votes in ascending order with status 200', () => {
+            return request(app)
+            .get('/api/articles/?sort_by=votes&order=asc')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length === 12)
+                expect(articles).toBeSortedBy('votes',{ascending:true});
+            });
+        });
+        test.only('Should return json of the articles, orderd by date in ascending order, filtered by topic cats with status 200', () => {
+            return request(app)
+            .get('/api/articles/?order=asc&topic=cats')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length === 12)
+                expect(articles).toBeSortedBy('created_at',{ascending:true});
+                articles.forEach((article) => expect(article.topic).toEqual('cats'));
             });
         });
         test('should return error message with 404 for invalid path', () => {

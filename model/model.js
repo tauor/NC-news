@@ -46,15 +46,33 @@ exports.selectUsers = () => {
         .then((result) => result.rows);
 }
 
-exports.selectArticles = () => {
-    return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
-    FROM articles 
-    FULL JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC`)
-    .then((result) => {
-        return result.rows;
-    })
+exports.selectArticles = (sort_by, order, topic) => {
+    if (sort_by === undefined){
+        sort_by = 'created_at'
+    }
+    if (order === undefined){
+        order = 'desc'
+    }
+    console.log(sort_by, order, topic)
+    if (topic === undefined){
+        return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
+        FROM articles 
+        FULL JOIN comments ON articles.article_id = comments.article_id
+        GROUP BY articles.article_id
+        ORDER BY articles.${sort_by} ${order}`)
+        .then((result) => {
+            return result.rows;
+        })
+    }else{
+        return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
+        FROM articles WHERE articles.topic = "cats"
+        FULL JOIN comments ON articles.article_id = comments.article_id
+        GROUP BY articles.article_id
+        ORDER BY articles.${sort_by} ${order}`)
+        .then((result) => {
+            return result.rows;
+        }) 
+    }
 }
 
 exports.selectArticlesComments = async (id) => {
