@@ -269,7 +269,7 @@ describe('app', () => {
         test('Should post a new comment to the specifed article, respond with the json of that comment and status 201', () => {
             const idToPost = 9
             const commentToPost = {
-                username: 'Paul Grump',
+                username: 'rogersop',
                 body: 'test comment :)'
             }
             return request(app)
