@@ -236,13 +236,16 @@ describe('app', () => {
                 })
             });
         });
-        test('if an article has no comments responds with no comments msg and status 200', () => {
+        test('if an article has no comments responds with empty array and status 200', () => {
             const idToSearch = 10
             return request(app)
             .get(`/api/articles/${idToSearch}/comments`)
             .expect(200)
             .then(({body}) => {
-                expect(body.msg).toEqual('No comments for this article');
+                const comments = body.comments;
+                expect(comments).toBeInstanceOf(Array);
+                expect(comments.length === 0 ).toBeTruthy();
+                expect(comments).toEqual([]);
             });
         });
         test('should return error message with 400 for bad request', () => {

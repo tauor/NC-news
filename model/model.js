@@ -12,7 +12,6 @@ exports.selectArticleById = (id) => {
         WHERE articles.article_id = $1
         GROUP BY articles.article_id;`,[id])
         .then((result) => {
-            result.rows[0];
             if (!result.rows[0]){ 
                 return Promise.reject({
                     status: 404,
@@ -32,7 +31,6 @@ exports.changeArticleVotesById = (id,newVotes) => {
     }
     return db.query(`UPDATE articles SET votes =  votes + $1 WHERE article_id = $2 RETURNING *`,[newVotes,id])
         .then((result) => {
-            result.rows[0];
             if (!result.rows[0]){ 
                 return Promise.reject({
                     status: 404,
@@ -63,20 +61,11 @@ exports.selectArticlesComments = async (id) => {
     const articles = await db.query(`SELECT * FROM articles`)
     return db.query(`SELECT * FROM comments WHERE article_id = $1`,[id])
     .then((result) => {
-        const numArticles = articles.rows.length;
-        result.rows[0];
-        if (!result.rows[0]){
-            if (id <= numArticles){
-                return Promise.reject({
-                    status: 200,
-                    msg: 'No comments for this article'
-                })
-            }else{ 
-                return Promise.reject({
-                    status: 404,
-                    msg: 'No article found with that id'
-                })
-            }
+        if (!result.rows[0] && id > articles.rows.length){
+            return Promise.reject({
+                status: 404,
+                msg: 'No article found with that id'
+            })
         }
         return result.rows;
     })
