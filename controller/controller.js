@@ -2,14 +2,16 @@ const {selectTopics,
     selectArticleById,
     changeArticleVotesById,
     selectUsers,
-    selectArticles
+    selectArticles,
+    selectArticlesComments
     } = require('../model/model.js')
 
 
-exports.getTopics = (req, res) => {
+exports.getTopics = (req, res, next) => {
     selectTopics().then((topics) => {
         res.status(200).send({topics});
     })
+    .catch(next);
 }
 
 exports.getArticleById = (req, res, next) => {
@@ -29,15 +31,25 @@ exports.updateArticleVotes = (req, res, next) => {
     .catch(next);
 }
 
-exports.getUsers = (req, res) => {
+exports.getUsers = (req, res, next) => {
     selectUsers().then((users) => {
         res.status(200).send({users});
     })
+    .catch(next);
 }
 
-exports.getArticles = (req, res) => {
+exports.getArticles = (req, res, next) => {
     selectArticles().then((articles) => {
         res.status(200).send({articles});
     })
+    .catch(next);
+}
+
+exports.getArticlesComments = (req, res, next) => {
+    const {article_id} = req.params;
+    selectArticlesComments(article_id).then((comments) => {
+        res.status(200).send({comments});
+    })
+    .catch(next);
 }
 

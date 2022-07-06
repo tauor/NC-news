@@ -212,4 +212,57 @@ describe('app', () => {
             })
         });
     });
+    describe('GET /api/articles/:article_id/comments', () => {
+        test('Should return json of comments related to that article with status 200', () => {
+            const idToSearch = 9
+            return request(app)
+            .get(`/api/articles/${idToSearch}/comments`)
+            .expect(200)
+            .then(({body}) => {
+                const comments = body.comments;
+                expect(comments).toBeInstanceOf(Array);
+                expect(comments.length === 2).toBeTruthy();
+                comments.forEach((comment) => {
+                    expect(comment).toEqual(
+                        expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            body: expect.any(String),
+                            article_id: idToSearch,
+                            author: expect.any(String),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String)
+                        })
+                    )
+                })
+            });
+        });
+        test('if an article has no comments responds with empty array and status 200', () => {
+            const idToSearch = 10
+            return request(app)
+            .get(`/api/articles/${idToSearch}/comments`)
+            .expect(200)
+            .then(({body}) => {
+                const comments = body.comments;
+                expect(comments).toBeInstanceOf(Array);
+                expect(comments.length === 0 ).toBeTruthy();
+                expect(comments).toEqual([]);
+            });
+        });
+        test('should return error message with 400 for bad request', () => {
+            return request(app)
+            .get('/api/articles/carrots/comments')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Bad request');
+            })
+        });
+        test('should return error message with 404 for invalid article id', () => {
+            return request(app)
+            .get('/api/articles/9999/comments')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No article found with that id');
+            })
+        });
+    });
 });
