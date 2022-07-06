@@ -265,4 +265,20 @@ describe('app', () => {
             })
         });
     });
+    describe.only('POST /api/articles/:article_id/comments', () => {
+        test('Should post a new comment to the specifed article, respond with the json of that comment and status 201', () => {
+            const idToPost = 9
+            const commentToPost = {
+                username: 'Paul Grump',
+                body: 'test comment :)'
+            }
+            return request(app)
+            .post(`/api/articles/${idToPost}/comments`)
+            .send(commentToPost)
+            .expect(201)
+            .then(({body}) => {
+                console.log(body.comment);
+            });
+        });
+    });
 });

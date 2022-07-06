@@ -1,4 +1,5 @@
 const db = require('../db/connection.js');
+const {convertTimestampToDate} = require('../db/helpers/utils.js');
 
 exports.selectTopics = () => {
     return db.query('SELECT * FROM topics')
@@ -68,5 +69,14 @@ exports.selectArticlesComments = async (id) => {
             })
         }
         return result.rows;
+    })
+}
+
+exports.addComment = (articleId, author, body) => {
+
+    return db.query(`INSERT INTO comments (body, article_id, author)
+    VALUES ($1, $2, $3) RETURNING *`,[body,articleId,author])
+    .then((result) => {
+        return result.rows[0]
     })
 }

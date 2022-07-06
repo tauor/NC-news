@@ -3,7 +3,8 @@ const {selectTopics,
     changeArticleVotesById,
     selectUsers,
     selectArticles,
-    selectArticlesComments
+    selectArticlesComments,
+    addComment
     } = require('../model/model.js')
 
 
@@ -51,5 +52,13 @@ exports.getArticlesComments = (req, res, next) => {
         res.status(200).send({comments});
     })
     .catch(next);
+}
+
+exports.postComment = (req, res, next) => {
+    const {article_id} = req.params;
+    const {username, body} = req.body;
+    addComment(article_id, username, body).then((comment) => {
+        res.status(201).send({comment});
+    })
 }
 
