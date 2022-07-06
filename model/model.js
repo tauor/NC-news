@@ -59,15 +59,24 @@ exports.selectArticles = () => {
     })
 }
 
-exports.selectArticlesComments = (id) => {
+exports.selectArticlesComments = async (id) => {
+    const articles = await db.query(`SELECT * FROM articles`)
     return db.query(`SELECT * FROM comments WHERE article_id = $1`,[id])
     .then((result) => {
+        const numArticles = articles.rows.length;
         result.rows[0];
-        if (!result.rows[0]){ 
-            return Promise.reject({
-                status: 404,
-                msg: 'No article found with that id'
-            })
+        if (!result.rows[0]){
+            if (id <= numArticles){
+                return Promise.reject({
+                    status: 200,
+                    msg: 'No comments for this article'
+                })
+            }else{ 
+                return Promise.reject({
+                    status: 404,
+                    msg: 'No article found with that id'
+                })
+            }
         }
         return result.rows;
     })
