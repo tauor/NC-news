@@ -214,7 +214,7 @@ describe('app', () => {
                 expect(articles).toBeSortedBy('votes',{ascending:true});
             });
         });
-        test.only('Should return json of the articles, orderd by date in ascending order, filtered by topic cats with status 200', () => {
+        test('Should return json of the articles, orderd by date in ascending order, filtered by topic cats with status 200', () => {
             return request(app)
             .get('/api/articles/?order=asc&topic=cats')
             .expect(200)
