@@ -177,7 +177,7 @@ describe('app', () => {
             })
         });
     });
-    describe.only('GET /api/articles', () => {
+    describe('GET /api/articles', () => {
         test('Should return json of the articles, orderd by date (default) in descending (default) order with status 200', () => {
             return request(app)
             .get('/api/articles')
@@ -225,6 +225,16 @@ describe('app', () => {
                 expect(articles).toBeSortedBy('created_at',{ascending:true});
                 articles.forEach((article) => expect(article.topic).toEqual('cats'));
             });
+        });
+        test('should return empty array and status 200 for topic with no articles', () => {
+            return request(app)
+            .get('/api/articles/?topic=paper')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length === 0);
+            })
         });
         test('should return error message with 404 for invalid path', () => {
             return request(app)
