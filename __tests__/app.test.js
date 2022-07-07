@@ -177,7 +177,7 @@ describe('app', () => {
             })
         });
     });
-    describe('GET /api/articles', () => {
+    describe.only('GET /api/articles', () => {
         test('Should return json of the articles, orderd by date (default) in descending (default) order with status 200', () => {
             return request(app)
             .get('/api/articles')
@@ -247,7 +247,7 @@ describe('app', () => {
             .get('/api/articles/?sort_by=tom')
             .expect(400)
             .then(({body}) => {
-                expect(body.msg).toEqual('Bad request');
+                expect(body.msg).toEqual('Invalid sort_by - no column with that name');
             })
         });
         test('should return error message with 404 for an invalid topic', () => {

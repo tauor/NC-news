@@ -46,21 +46,26 @@ exports.selectUsers = () => {
         .then((result) => result.rows);
 }
 
-exports.selectArticles = (sort_by, order, topic) => {
+exports.selectArticles = async (sort_by, order, topic) => {
+    const allowedSorts = ['article_id','title','topic','author','created_at','votes']
     if (sort_by === undefined){
         sort_by = 'created_at'
+    }
+    if (!allowedSorts.includes(sort_by)){
+        return Promise.reject({
+            status: 400,
+            msg: 'Invalid sort_by - no column with that name'
+        })
     }
     if (order === undefined){
         order = 'desc'
     }
-    //console.log(order)
     if (order !== 'asc' && order !== 'desc'){
         return Promise.reject({
             status: 400,
             msg: 'Bad order request'
         })
     }
-    //console.log(sort_by, order, topic)
     if (topic === undefined){
         return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
         FROM articles 
