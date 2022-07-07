@@ -4,7 +4,8 @@ const {selectTopics,
     selectUsers,
     selectArticles,
     selectArticlesComments,
-    addComment
+    addComment,
+    removeComment
     } = require('../model/model.js')
 
 
@@ -60,6 +61,14 @@ exports.postComment = (req, res, next) => {
     const {username, body} = req.body;
     addComment(article_id, username, body).then((comment) => {
         res.status(201).send({comment});
+    })
+    .catch(next);
+}
+
+exports.deleteComment = (req, res, next) => {
+    const {comment_id} = req.params;
+    removeComment(comment_id).then(() => {
+        res.status(204).send();
     })
     .catch(next);
 }

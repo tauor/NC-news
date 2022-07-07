@@ -133,3 +133,14 @@ exports.addComment = async (articleId, author, body) => {
         return result.rows[0]
     })
 }
+
+exports.removeComment = async (idToDelete) => {
+    const comments = await db.query(`SELECT * FROM comments WHERE comment_id = $1`,[idToDelete])
+    if (comments.rows.length === 0){
+        return Promise.reject({
+            status: 404,
+            msg: 'No article found with that id'
+        })
+    }
+    return db.query(`DELETE FROM comments WHERE comment_id = $1`,[idToDelete])
+}
