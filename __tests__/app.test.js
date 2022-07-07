@@ -234,6 +234,30 @@ describe('app', () => {
                 expect(body.msg).toEqual('Route not found');
             })
         });
+        test('should return error message with 400 for an invalid query - order', () => {
+            return request(app)
+            .get('/api/articles/?order=tom')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Bad order request');
+            })
+        });
+        test('should return error message with 400 for an invalid query - sort_by', () => {
+            return request(app)
+            .get('/api/articles/?sort_by=tom')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Bad request');
+            })
+        });
+        test('should return error message with 404 for an invalid topic', () => {
+            return request(app)
+            .get('/api/articles/?topic=tom')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No topic with that name');
+            })
+        });
     });
     describe('GET /api/articles/:article_id/comments', () => {
         test('Should return json of comments related to that article with status 200', () => {

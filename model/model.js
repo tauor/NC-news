@@ -53,6 +53,13 @@ exports.selectArticles = (sort_by, order, topic) => {
     if (order === undefined){
         order = 'desc'
     }
+    //console.log(order)
+    if (order !== 'asc' && order !== 'desc'){
+        return Promise.reject({
+            status: 400,
+            msg: 'Bad order request'
+        })
+    }
     //console.log(sort_by, order, topic)
     if (topic === undefined){
         return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
@@ -67,10 +74,16 @@ exports.selectArticles = (sort_by, order, topic) => {
         return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
         FROM articles 
         FULL JOIN comments ON articles.article_id = comments.article_id
+        WHERE articles.topic = $1
         GROUP BY articles.article_id
-        WHERE articles.topic = "cats"
-        ORDER BY articles.${sort_by} ${order}`)
+        ORDER BY articles.${sort_by} ${order}`,[topic])
         .then((result) => {
+            if (result.rows.length === 0){
+                return Promise.reject({
+                    status: 404,
+                    msg: 'No topic with that name'
+                })
+            }
             return result.rows;
         }) 
     }
