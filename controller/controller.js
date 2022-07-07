@@ -9,6 +9,7 @@ const {selectTopics,
     selectApi
     } = require('../model/model.js')
 
+const endpoints = require('../endpoints.json');
 
 exports.getTopics = (req, res, next) => {
     selectTopics().then((topics) => {
@@ -75,7 +76,6 @@ exports.deleteComment = (req, res, next) => {
 }
 
 exports.getApi = (req, res) => {
-    const endpoints = require('../endpoints.json');
     res.status(200).send(endpoints);
 }
 
