@@ -226,6 +226,16 @@ describe('app', () => {
                 articles.forEach((article) => expect(article.topic).toEqual('cats'));
             });
         });
+        test('should return empty array and status 200 for topic with no articles', () => {
+            return request(app)
+            .get('/api/articles/?topic=paper')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length === 0);
+            })
+        });
         test('should return error message with 404 for invalid path', () => {
             return request(app)
             .get('/api/carrots')
@@ -247,7 +257,7 @@ describe('app', () => {
             .get('/api/articles/?sort_by=tom')
             .expect(400)
             .then(({body}) => {
-                expect(body.msg).toEqual('Bad request');
+                expect(body.msg).toEqual('Invalid sort_by - no column with that name');
             })
         });
         test('should return error message with 404 for an invalid topic', () => {
