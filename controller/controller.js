@@ -5,9 +5,11 @@ const {selectTopics,
     selectArticles,
     selectArticlesComments,
     addComment,
-    removeComment
+    removeComment,
+    selectApi
     } = require('../model/model.js')
 
+const endpoints = require('../endpoints.json');
 
 exports.getTopics = (req, res, next) => {
     selectTopics().then((topics) => {
@@ -71,5 +73,9 @@ exports.deleteComment = (req, res, next) => {
         res.status(204).send();
     })
     .catch(next);
+}
+
+exports.getApi = (req, res) => {
+    res.status(200).send(endpoints);
 }
 

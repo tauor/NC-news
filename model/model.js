@@ -71,7 +71,7 @@ exports.selectArticles = async (sort_by, order, topic) => {
     let queryStr = `SELECT articles.*, COUNT (*) :: int AS comment_count
     FROM articles 
     FULL JOIN comments ON articles.article_id = comments.article_id`;
-
+    
     if (topic !== undefined){
         const topicCheck = await db.query(`SELECT * FROM topics WHERE slug = $1`,[topic])
         if (topicCheck.rows.length === 0){
@@ -144,3 +144,4 @@ exports.removeComment = async (idToDelete) => {
     }
     return db.query(`DELETE FROM comments WHERE comment_id = $1`,[idToDelete])
 }
+

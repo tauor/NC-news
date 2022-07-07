@@ -9,11 +9,13 @@ const {getTopics,
     getArticles,
     getArticlesComments,
     postComment,
-    deleteComment
+    deleteComment,
+    getApi
     } = require('./controller/controller.js')
     
 const {PSQLErrors, customErrors, unhandledErrors, routeError} = require('./handlers/error-handlers.js')
 
+app.get('/api', getApi)
 app.get('/api/topics', getTopics);
 app.get('/api/articles/:article_id', getArticleById);
 app.get('/api/users', getUsers);
