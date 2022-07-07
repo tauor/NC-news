@@ -9,19 +9,103 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
-  "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+  "GET /api/articles/:article_id": {
+    "description": "serves an object of the specified article (by id)",
+    "queries": ["article_id"],
     "exampleResponse": {
-      "articles": [
-        {
+      "article": {
+          "article_id": "ID_SEARCHED_FOR",
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
           "body": "Text from the article..",
-          "created_at": 1527695953341
+          "created_at": 1527695953341,
+          "votes": 0
+        }
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url":
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
         }
       ]
     }
+  },
+  "GET /api/articles": {
+    "description": "serves an array of all articles",
+    "queries": ["topic", "sort_by", "order"],
+    "default queries": {"topic": null, "sort_by":"created_at", "order":"desc"},
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 1,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": 1527695953341,
+          "votes": 0,
+          "comment_count": 5
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all the comments relating to the specified article",
+    "queries": ["article_id"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+          "votes": 14,
+          "author": "butter_bridge",
+          "article_id": "ID_SEARCHED_FOR",
+          "created_at": 1604113380000
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "increase or decreases the votes of a specified article via a request json then responds with the updated article",
+    "queries": ["article_id"],
+    "exampleRequestJson": {"inc_votes": 12},
+    "exampleResponse": {
+      "article":{
+        "article_id": 1,
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "weegembump",
+        "body": "Text from the article..",
+        "created_at": 1527695953341,
+        "votes": 0,
+        "comment_count": 17
+      }
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Posts a new comment to the specified article via a request json then responds with a json of the newly added comment",
+    "queries": ["article_id"],
+    "exampleRequestJson": { "username": "rogersop", "body": "test comment :)"},
+    "exampleResponse": {
+      "comment": {
+        "body": "test comment :)",
+        "votes": 0,
+        "author": "rogersop",
+        "article_id": "ID_SEARCHED_FOR",
+        "created_at": 1595294400000
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deleted the specfied comment",
+    "queries": ["comment_id"],
+    "exampleResponse": {}
   }
 }
