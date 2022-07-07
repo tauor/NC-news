@@ -53,14 +53,12 @@ exports.selectArticles = (sort_by, order, topic) => {
     if (order === undefined){
         order = 'desc'
     }
-    //console.log(order)
     if (order !== 'asc' && order !== 'desc'){
         return Promise.reject({
             status: 400,
             msg: 'Bad order request'
         })
     }
-    //console.log(sort_by, order, topic)
     if (topic === undefined){
         return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
         FROM articles 
