@@ -392,7 +392,7 @@ describe('app', () => {
             })
         });
     });
-    describe.only('DELETE /api/comments/:comment_id', () => {
+    describe('DELETE /api/comments/:comment_id', () => {
         test('Should delete the comment with the given id and respond with a 204', () => {
             return request(app)
             .delete(`/api/comments/9`)
