@@ -419,7 +419,7 @@ describe('app', () => {
             })
         });
     });
-    describe.only('GET /api', () => {
+    describe('GET /api', () => {
         test('Should respond with endpoints.json and status 200', () => {
             return request(app)
             .get('/api')
@@ -427,6 +427,19 @@ describe('app', () => {
             .then(({body}) => {
                 const endpoints = body;
                 expect(endpoints).toBeInstanceOf(Object);
+                expect(endpoints).toEqual(
+                    expect.objectContaining({
+                        'GET /api': expect.any(Object),
+                        'GET /api/topics': expect.any(Object),
+                        'GET /api/articles/:article_id': expect.any(Object),
+                        'GET /api/users': expect.any(Object),
+                        'GET /api/articles': expect.any(Object),
+                        'GET /api/articles/:article_id/comments': expect.any(Object),
+                        'PATCH /api/articles/:article_id': expect.any(Object),
+                        'POST /api/articles/:article_id/comments': expect.any(Object),
+                        'DELETE /api/comments/:comment_id': expect.any(Object),
+                    })
+                )
             })
         });
     });
