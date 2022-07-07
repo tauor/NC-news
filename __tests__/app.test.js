@@ -419,4 +419,15 @@ describe('app', () => {
             })
         });
     });
+    describe.only('GET /api', () => {
+        test('Should respond with endpoints.json and status 200', () => {
+            return request(app)
+            .get('/api')
+            .expect(200)
+            .then(({body}) => {
+                const endpoints = body;
+                expect(endpoints).toBeInstanceOf(Object);
+            })
+        });
+    });
 });
