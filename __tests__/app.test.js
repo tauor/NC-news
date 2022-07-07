@@ -178,7 +178,7 @@ describe('app', () => {
         });
     });
     describe('GET /api/articles', () => {
-        test('Should return json of the articles, orderd by date in descending order with status 200', () => {
+        test('Should return json of the articles, orderd by date (default) in descending (default) order with status 200', () => {
             return request(app)
             .get('/api/articles')
             .expect(200)
@@ -203,12 +203,69 @@ describe('app', () => {
                 })
             });
         });
+        test('Should return json of the articles, orderd by votes in ascending order with status 200', () => {
+            return request(app)
+            .get('/api/articles/?sort_by=votes&order=asc')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length === 12)
+                expect(articles).toBeSortedBy('votes',{ascending:true});
+            });
+        });
+        test('Should return json of the articles, orderd by date in ascending order, filtered by topic cats with status 200', () => {
+            return request(app)
+            .get('/api/articles/?order=asc&topic=cats')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length === 12)
+                expect(articles).toBeSortedBy('created_at',{ascending:true});
+                articles.forEach((article) => expect(article.topic).toEqual('cats'));
+            });
+        });
+        test('should return empty array and status 200 for topic with no articles', () => {
+            return request(app)
+            .get('/api/articles/?topic=paper')
+            .expect(200)
+            .then(({body}) => {
+                const articles = body.articles;
+                expect(articles).toBeInstanceOf(Array);
+                expect(articles.length === 0);
+            })
+        });
         test('should return error message with 404 for invalid path', () => {
             return request(app)
             .get('/api/carrots')
             .expect(404)
             .then(({body}) => {
                 expect(body.msg).toEqual('Route not found');
+            })
+        });
+        test('should return error message with 400 for an invalid query - order', () => {
+            return request(app)
+            .get('/api/articles/?order=tom')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Bad order request');
+            })
+        });
+        test('should return error message with 400 for an invalid query - sort_by', () => {
+            return request(app)
+            .get('/api/articles/?sort_by=tom')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Invalid sort_by - no column with that name');
+            })
+        });
+        test('should return error message with 404 for an invalid topic', () => {
+            return request(app)
+            .get('/api/articles/?topic=tom')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No topic with that name');
             })
         });
     });

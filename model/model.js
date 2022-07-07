@@ -46,12 +46,47 @@ exports.selectUsers = () => {
         .then((result) => result.rows);
 }
 
-exports.selectArticles = () => {
-    return db.query(`SELECT articles.*, COUNT (*) :: int AS comment_count
+exports.selectArticles = async (sort_by, order, topic) => {
+    const allowedSorts = ['article_id','title','topic','author','created_at','votes']
+    if (sort_by === undefined){
+        sort_by = 'created_at'
+    }
+    if (!allowedSorts.includes(sort_by)){
+        return Promise.reject({
+            status: 400,
+            msg: 'Invalid sort_by - no column with that name'
+        })
+    }
+    if (order === undefined){
+        order = 'desc'
+    }
+    if (order !== 'asc' && order !== 'desc'){
+        return Promise.reject({
+            status: 400,
+            msg: 'Bad order request'
+        })
+    }
+
+    let queryValues = []
+    let queryStr = `SELECT articles.*, COUNT (*) :: int AS comment_count
     FROM articles 
-    FULL JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC`)
+    FULL JOIN comments ON articles.article_id = comments.article_id`;
+
+    if (topic !== undefined){
+        const topicCheck = await db.query(`SELECT * FROM topics WHERE slug = $1`,[topic])
+        if (topicCheck.rows.length === 0){
+            return Promise.reject({
+                status: 404,
+                msg: 'No topic with that name'
+            })
+        }
+        queryValues.push(topic)
+        queryStr  += (` WHERE articles.topic = $1`)
+    }
+
+    queryStr += (` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order}`)
+
+    return db.query(queryStr,queryValues)
     .then((result) => {
         return result.rows;
     })
@@ -74,7 +109,7 @@ exports.selectArticlesComments = async (id) => {
 exports.addComment = async (articleId, author, body) => {
     if (author === undefined || body === undefined){
         return Promise.reject({
-            status:400,
+            status: 400,
             msg: 'Bad request'
         })
     }
