@@ -8,7 +8,8 @@ const {getTopics,
     getUsers,
     getArticles,
     getArticlesComments,
-    postComment
+    postComment,
+    deleteComment
     } = require('./controller/controller.js')
     
 const {PSQLErrors, customErrors, unhandledErrors, routeError} = require('./handlers/error-handlers.js')
@@ -21,11 +22,9 @@ app.get('/api/articles/:article_id/comments', getArticlesComments);
 
 app.patch('/api/articles/:article_id', updateArticleVotes);
 
-app.post('/api/articles/:article_id/comments', postComment)
+app.post('/api/articles/:article_id/comments', postComment);
 
-
-
-
+app.delete('/api/comments/:comment_id', deleteComment)
 
 
 app.all('/*', routeError); 

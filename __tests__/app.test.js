@@ -358,4 +358,31 @@ describe('app', () => {
             })
         });
     });
+    describe.only('DELETE /api/comments/:comment_id', () => {
+        test('Should delete the comment with the given id and respond with a 204', () => {
+            return request(app)
+            .delete(`/api/comments/9`)
+            .expect(204)
+            .then(() => {
+                return db.query('SELECT * FROM comments')
+                .then((result) => expect(result.rows.length) === 17);
+            })
+        });
+        test('should return error message with 404 for invalid article id', () => {
+            return request(app)
+            .delete('/api/comments/9999')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toEqual('No article found with that id');
+            })
+        });
+        test('should return error message with 400 for bad request', () => {
+            return request(app)
+            .delete('/api/comments/carrots')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toEqual('Bad request');
+            })
+        });
+    });
 });
