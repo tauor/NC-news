@@ -2,32 +2,20 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-const {getTopics, 
-    getArticleById, 
-    updateArticleVotes, 
-    getUsers,
-    getArticles,
-    getArticlesComments,
-    postComment,
-    deleteComment,
-    getApi
-    } = require('./controller/controller.js')
-    
 const {PSQLErrors, customErrors, unhandledErrors, routeError} = require('./handlers/error-handlers.js')
 
-app.get('/api', getApi)
-app.get('/api/topics', getTopics);
-app.get('/api/articles/:article_id', getArticleById);
-app.get('/api/users', getUsers);
-app.get('/api/articles', getArticles)
-app.get('/api/articles/:article_id/comments', getArticlesComments);
+const apiRouter = require('./routes/api-router.js');
+const topicsRouter = require('./routes/topics-router.js');
+const articlesRouter = require('./routes/articles-router.js');
+const usersRouter = require('./routes/users-router.js');
+const commentsRouter = require('./routes/comments-router.js');
+    
 
-app.patch('/api/articles/:article_id', updateArticleVotes);
-
-app.post('/api/articles/:article_id/comments', postComment);
-
-app.delete('/api/comments/:comment_id', deleteComment)
-
+app.use('/api', apiRouter);
+app.use('/api/topics', topicsRouter);
+app.use('/api/articles', articlesRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/comments', commentsRouter);
 
 app.all('/*', routeError); 
 
