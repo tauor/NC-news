@@ -433,6 +433,7 @@ describe('app', () => {
                         'GET /api/topics': expect.any(Object),
                         'GET /api/articles/:article_id': expect.any(Object),
                         'GET /api/users': expect.any(Object),
+                        'GET /api/users/:username': expect.any(Object),
                         'GET /api/articles': expect.any(Object),
                         'GET /api/articles/:article_id/comments': expect.any(Object),
                         'PATCH /api/articles/:article_id': expect.any(Object),
@@ -443,5 +444,33 @@ describe('app', () => {
             })
         });
     });
-
+    describe('GET /api/users/:username', () => {
+        test('Should return json of comments related to that article with status 200', () => {
+            const usernameToSearch = 'rogersop'
+            return request(app)
+            .get(`/api/users/${usernameToSearch}`)
+            .expect(200)
+            .then(({body}) => {
+                const user = body.user;
+                expect(user).toBeInstanceOf(Object);
+                expect(user).toEqual(
+                    expect.objectContaining({
+                        username: usernameToSearch,
+                        name: 'paul',
+                        avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
+                    })
+                )
+            });
+        });
+        test('should return error message with 404 for invalid usernmae', () => {
+            const usernameToSearch = 'tom'
+            return request(app)
+            .delete(`/api/users/${usernameToSearch}`)
+            .expect(404)
+            .then(({body}) => {
+                console.log(body);
+                expect(body.msg).toEqual('Route not found');
+            })
+        });
+    });
 });

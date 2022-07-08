@@ -145,3 +145,10 @@ exports.removeComment = async (idToDelete) => {
     return db.query(`DELETE FROM comments WHERE comment_id = $1`,[idToDelete])
 }
 
+exports.selectUserByUsername = (uname) => {
+    return db.query(`SELECT * FROM users WHERE username = $1`,[uname])
+    .then((result) => {
+        return result.rows[0];
+    })
+}
+

@@ -1,5 +1,5 @@
 const usersRouter = require('express').Router();
-const {selectUsers} = require('../model/model.js');
+const {selectUsers, selectUserByUsername} = require('../model/model.js');
 
 usersRouter.get('/',(req,res,next) => {
     selectUsers().then((users) => {
@@ -7,5 +7,14 @@ usersRouter.get('/',(req,res,next) => {
     })
     .catch(next);
 })
+
+usersRouter.get('/:username',(req,res,next) => {
+    const {username} = req.params;
+    selectUserByUsername(username).then((user) => {
+        res.status(200).send({user});
+    })
+    .catch(next);
+})
+
 
 module.exports = usersRouter;

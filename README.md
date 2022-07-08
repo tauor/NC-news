@@ -5,7 +5,7 @@ This is an api built to supply useless news!
 The api includes:
 * Search system for articles/topics/users/comments
 * comment system for articles
-* votig system for articles.
+* voting system for articles.
 
 ## Hosted using heroku
 [Link to hosted version of Toms NC-News](https://tomnews.herokuapp.com/api)

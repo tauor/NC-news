@@ -17,13 +17,12 @@ app.use('/api/articles', articlesRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/comments', commentsRouter);
 
-app.all('/*', routeError); 
 
 app.use(PSQLErrors);
 app.use(customErrors);
 app.use(unhandledErrors);
 
-  
+app.all('/*', routeError);   
 
 
 
