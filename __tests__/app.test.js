@@ -468,7 +468,6 @@ describe('app', () => {
             .delete(`/api/users/${usernameToSearch}`)
             .expect(404)
             .then(({body}) => {
-                console.log(body);
                 expect(body.msg).toEqual('Route not found');
             })
         });
