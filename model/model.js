@@ -47,7 +47,7 @@ exports.selectUsers = () => {
 }
 
 exports.selectArticles = async (sort_by, order, topic) => {
-    const allowedSorts = ['article_id','title','topic','author','created_at','votes']
+    const allowedSorts = ['article_id','title','topic','author','created_at','votes', 'comment_count']
     if (sort_by === undefined){
         sort_by = 'created_at'
     }
